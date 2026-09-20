@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#070b12">
+  <title>TCG Seller Vault — Show Repurposer</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect rx='14' width='64' height='64' fill='%23070b12'/%3E%3Cpath d='M15 12h27l7 7v33H15z' fill='none' stroke='%23e9c66b' stroke-width='5'/%3E%3Cpath d='M23 28h18M23 37h18' stroke='%23188dff' stroke-width='4'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<main class="shell">
+  <header class="topbar">
+    <div><div class="eyebrow">TCG SELLER VAULT</div><h1>Show Repurposer</h1></div>
+    <span id="catalogBadge" class="badge">Checking catalog…</span>
+  </header>
+
+  <nav class="steps" aria-label="Workflow">
+    <span class="step active" data-step="1">1 <b>Import</b></span>
+    <span class="step" data-step="2">2 <b>Analyze</b></span>
+    <span class="step" data-step="3">3 <b>Review</b></span>
+    <span class="step" data-step="4">4 <b>Export</b></span>
+  </nav>
+
+  <div class="workspace">
+    <section class="controls">
+      <article class="panel" id="importPanel">
+        <div class="panel-title"><span>1</span><h2>Import your show</h2></div>
+        <label class="drop" for="videoFile"><b>Choose Whatnot clip</b><small id="videoLabel">MP4, MOV, or WebM</small></label>
+        <input id="videoFile" class="visually-hidden" type="file" accept="video/*">
+        <label class="drop secondary" for="logoFile"><b>Add stream logo</b><small id="logoLabel">PNG, JPG, or WebP</small></label>
+        <input id="logoFile" class="visually-hidden" type="file" accept="image/*">
+        <details>
+          <summary>Brand settings</summary>
+          <label for="seller">Seller name / handle</label>
+          <input id="seller" maxlength="44" placeholder="@YOURSELLERNAME">
+          <label for="cta">Lower call-to-action</label>
+          <input id="cta" maxlength="56" value="FOLLOW FOR MORE LIVE TCG HITS">
+          <label class="toggle"><input id="showCta" type="checkbox" checked> Show call-to-action</label>
+        </details>
+      </article>
+
+      <article class="panel" id="analyzePanel">
+        <div class="panel-title"><span>2</span><h2>Analyze video</h2></div>
+        <p class="helper">Finds card reveals, matches the game and exact printing, checks foil evidence, and retrieves the matching market value.</p>
+        <button id="analyze" class="primary" disabled>Analyze video</button>
+        <div id="analysisState" class="state" role="status" aria-live="polite">Add a clip and logo to begin.</div>
+        <div id="progressWrap" class="progress-wrap" hidden><div class="progress-track"><div id="progressBar"></div></div><span id="progressText">0%</span></div>
+      </article>
+
+      <article class="panel" id="reviewPanel" hidden>
+        <div class="panel-title"><span>3</span><h2>Quick review</h2></div>
+        <p id="reviewSummary" class="helper"></p>
+        <div id="hits"></div>
+      </article>
+
+      <article class="panel" id="exportPanel">
+        <div class="panel-title"><span>4</span><h2>Preview & export</h2></div>
+        <button id="preview" class="secondary-button" disabled>Preview completed video</button>
+        <button id="export" class="primary" disabled>Export social video</button>
+        <div id="exportState" class="state">Waiting for analysis.</div>
+      </article>
+    </section>
+
+    <section class="stage-panel" aria-label="Video preview">
+      <canvas id="output" width="720" height="1280"></canvas>
+      <video id="video" playsinline preload="metadata" hidden></video>
+      <img id="logo" alt="" hidden>
+      <div class="transport">
+        <button id="playPause" class="icon-button" disabled aria-label="Play or pause">▶</button>
+        <input id="scrub" type="range" min="0" max="0" step=".05" value="0" aria-label="Video position">
+        <time id="clock">0:00.0</time>
+      </div>
+    </section>
+  </div>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js" crossorigin="anonymous"></script>
+<script type="module" src="app.js"></script>
+</body>
+</html>

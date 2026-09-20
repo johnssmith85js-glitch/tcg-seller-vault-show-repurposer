@@ -1,0 +1,13 @@
+{
+  "name": "tcg-seller-vault-show-repurposer",
+  "private": true,
+  "version": "0.3.0",
+  "type": "module",
+  "scripts": {
+    "catalog": "node sync-catalog.mjs",
+    "build": "node build-site.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

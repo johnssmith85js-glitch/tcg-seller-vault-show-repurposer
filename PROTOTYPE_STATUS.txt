@@ -1,0 +1,40 @@
+TCG SELLER VAULT — SHOW REPURPOSER FUNCTIONAL PROTOTYPE R3
+
+IMPLEMENTED
+- Local Whatnot video and customer-logo import
+- Approved protected V11 vertical presentation
+- Small circular logo covering the source-app diagonal-arrow control
+- Editable customer CTA / branding line
+- Primary customer workflow reduced to Import → Analyze → Preview → Export
+- Technical timeline controls hidden inside exception review
+- 3.6-second default reveal aid
+- $1+ qualification gate
+- Card, set, printing, condition-price, and finish review controls
+- Explicit Foil / Non-foil / Unknown finish states
+- Unknown finish blocks output; it never defaults to non-foil
+- Exact finish-specific price verification gate
+- Price omission when a finish is verified but its market value is unavailable
+- Local project-settings export
+- Social-video preview and WebM export
+- Source-audio preservation when supported by the browser
+
+IMPLEMENTED IN R3
+- Real browser-side frame sampling and OCR
+- Catalog-neutral matching across all TCGCSV categories
+- Automatic game inference from the matched catalog record
+- Card/set/printing candidate matching
+- Multi-frame foil/non-foil evidence scoring
+- Unknown finish review gate; never defaults to non-foil
+- Finish-specific TCGplayer market lookup
+- Human review queue for low-confidence matches
+- Daily GitHub Actions catalog rebuild and GitHub Pages deployment
+
+REMAINING PRODUCT HARDENING
+- Expand video/card-layout test coverage across more TCGs and lighting conditions
+- Improve reveal-boundary precision and candidate ranking from real customer footage
+- Add MP4 export when a free browser-compatible path is validated
+
+SAFETY RULE
+Automatic recognition may propose a result, but no value is rendered unless
+the card, set, printing, finish, and matching NM market-price record pass the
+required verification gates.

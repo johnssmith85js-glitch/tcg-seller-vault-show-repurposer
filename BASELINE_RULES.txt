@@ -1,0 +1,18 @@
+SHOW REPURPOSER PROTOTYPE R1 — APPROVED VIDEO BASELINE RULES
+
+- V11 full-frame protected source-video presentation.
+- Upper black zone reserved for dynamic hit aids.
+- HIT = confidently identified card with current TCGplayer NM market value >= $1.00.
+- Aid starts when card is fully revealed.
+- Aid duration ~3.6 seconds, then clears.
+- Price requires confident card + set + printing/variant + foil/nonfoil + NM match.
+- Foil and non-foil are separate product records. Never default an unknown finish to non-foil.
+- When the exact finish-specific market price cannot be verified, identify the finish and omit the value.
+- No hit aid may appear before the qualifying card is fully revealed.
+- Small circular customer logo badge covers lower-right source-app diagonal-arrow/control area.
+- Lower visual aid remains present and is customer-editable; it may be hidden when desired.
+- Main footage must remain unobstructed.
+- No generic center overlays.
+- Export retains the source clip's audio when supported by the browser.
+
+Prototype R1 note: automatic candidate recognition/current-price retrieval requires the next live data/recognition layer. R1 implements the approved rendering, timeline review, finish-specific verification gates, project saving, audio-preserving export, and confirmation controls without fabricating recognition or pricing.
