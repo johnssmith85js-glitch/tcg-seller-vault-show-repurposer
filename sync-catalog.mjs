@@ -9,7 +9,7 @@ const only = (process.env.TCG_CATEGORY_IDS || "")
   .map(Number);
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-async function get(url) {
+async function get(url, allowMissing = false) {
   for (let attempt = 0; attempt < 10; attempt++) {
     const response = await fetch(url, {
       headers: {
@@ -18,6 +18,10 @@ async function get(url) {
     });
 
     if (response.ok) return response.json();
+    if (response.status === 404 && allowMissing) {
+      console.warn(`Catalog endpoint unavailable; skipping ${url}`);
+      return null;
+    }
 
     const retryAfter = Number(response.headers.get("retry-after")) || 0;
     const backoff = Math.min(60000, 1500 * (2 ** attempt));
@@ -41,17 +45,23 @@ let products = 0;
 
 for (const [categoryIndex, category] of categories.entries()) {
   await sleep(1000);
-  const groups = unwrap(await get(`${base}/${category.categoryId}/groups`));
+  const groupsResponse = await get(`${base}/${category.categoryId}/groups`, true);
+  const groups = groupsResponse ? unwrap(groupsResponse) : [];
 
   for (const group of groups) {
     await sleep(300);
-    const productsResponse = unwrap(
-      await get(`${base}/${category.categoryId}/${group.groupId}/products`)
+    const rawProducts = await get(
+      `${base}/${category.categoryId}/${group.groupId}/products`,
+      true
     );
+    if (!rawProducts) continue;
+    const productsResponse = unwrap(rawProducts);
     await sleep(300);
-    const prices = unwrap(
-      await get(`${base}/${category.categoryId}/${group.groupId}/prices`)
+    const rawPrices = await get(
+      `${base}/${category.categoryId}/${group.groupId}/prices`,
+      true
     );
+    const prices = rawPrices ? unwrap(rawPrices) : [];
 
     const priceMap = new Map();
     for (const price of prices) {
@@ -118,4 +128,3 @@ await writeFile(
 );
 
 console.log(`Wrote ${products} products across ${shards.size} shards`);
-
