@@ -26,17 +26,26 @@
     <section class="controls">
       <article class="panel" id="importPanel">
         <div class="panel-title"><span>1</span><h2>Import your show</h2></div>
-        <label class="drop" for="videoFile"><b>Choose Whatnot clip</b><small id="videoLabel">MP4, MOV, or WebM</small></label>
+        <label class="drop" for="videoFile"><b>Import Stream Clip</b><small id="videoLabel">MP4, MOV, or WebM</small></label>
         <input id="videoFile" class="visually-hidden" type="file" accept="video/*">
         <label class="drop secondary" for="logoFile"><b>Add stream logo</b><small id="logoLabel">PNG, JPG, or WebP</small></label>
         <input id="logoFile" class="visually-hidden" type="file" accept="image/*">
-        <details>
-          <summary>Brand settings</summary>
+        <details open>
+          <summary>Video layout settings</summary>
+          <p class="settings-note">Customize the logo badge and editable text shown in the finished video.</p>
+          <div class="range-grid">
+            <label for="logoX">Logo horizontal position <output id="logoXValue">328</output></label>
+            <input id="logoX" type="range" min="18" max="342" step="1" value="328">
+            <label for="logoY">Logo vertical position <output id="logoYValue">574</output></label>
+            <input id="logoY" type="range" min="18" max="602" step="1" value="574">
+            <label for="logoSize">Logo size <output id="logoSizeValue">22</output></label>
+            <input id="logoSize" type="range" min="16" max="72" step="2" value="22">
+          </div>
           <label for="seller">Seller name / handle</label>
           <input id="seller" maxlength="44" placeholder="@YOURSELLERNAME">
-          <label for="cta">Lower call-to-action</label>
+          <label for="cta">Bottom text</label>
           <input id="cta" maxlength="56" value="FOLLOW FOR MORE LIVE TCG HITS">
-          <label class="toggle"><input id="showCta" type="checkbox" checked> Show call-to-action</label>
+          <label class="toggle"><input id="showCta" type="checkbox" checked> Show bottom text</label>
         </details>
       </article>
 
@@ -75,6 +84,7 @@
   </div>
 </main>
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.11.6/dist/ffmpeg.min.js" crossorigin="anonymous"></script>
 <script type="module" src="app.js"></script>
 </body>
 </html>
