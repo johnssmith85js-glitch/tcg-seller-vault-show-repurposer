@@ -12,9 +12,13 @@ const keys = [
 ];
 
 async function fetchRequired(url) {
-  const response = await fetch(url);
-  if (!response.ok) throw new Error(`Catalog download failed (${response.status}): ${url}`);
-  return response;
+  for (let attempt = 0; attempt < 6; attempt++) {
+    const response = await fetch(url);
+    if (response.ok) return response;
+    if (response.status === 404) return response;
+    if (attempt < 5) await new Promise(resolve => setTimeout(resolve, 750 * (attempt + 1)));
+    else throw new Error(`Catalog download failed (${response.status}): ${url}`);
+  }
 }
 
 await rm(out, { recursive: true, force: true });
@@ -28,7 +32,7 @@ let copied = 0;
 async function worker() {
   while (next < keys.length) {
     const key = keys[next++];
-    const response = await fetch(`${base}/shards/${encodeURIComponent(key)}.json`);
+    const response = await fetchRequired(`${base}/shards/${encodeURIComponent(key)}.json`);
     if (response.status === 404) continue;
     if (!response.ok) throw new Error(`Shard download failed (${response.status}): ${key}`);
     await writeFile(join(out, "shards", `${key}.json`), Buffer.from(await response.arrayBuffer()));
@@ -36,6 +40,6 @@ async function worker() {
   }
 }
 
-await Promise.all(Array.from({ length: 24 }, worker));
+await Promise.all(Array.from({ length: 8 }, worker));
 if (copied < 100) throw new Error(`Only ${copied} catalog shards were recovered; refusing to deploy.`);
 console.log(`Reused ${copied} catalog shards from the current production deployment.`);
