@@ -1,0 +1,1 @@
+if('serviceWorker'in navigator&&!crossOriginIsolated){navigator.serviceWorker.register('./isolation-worker.js').then(()=>{if(!navigator.serviceWorker.controller&&!sessionStorage.getItem('isolation-reload')){sessionStorage.setItem('isolation-reload','1');location.reload()}}).catch(()=>{})}

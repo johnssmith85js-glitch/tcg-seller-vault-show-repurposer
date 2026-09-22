@@ -73,6 +73,7 @@
 
     <section class="stage-panel" aria-label="Video preview">
       <canvas id="output" width="360" height="640"></canvas>
+      <p class="preview-note">Approved export layout preview • Card and value aids appear in the upper black area for verified $1+ reveals.</p>
       <video id="video" playsinline preload="metadata" hidden></video>
       <img id="logo" alt="" hidden>
       <div class="transport">
@@ -84,6 +85,7 @@
   </div>
 </main>
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js" crossorigin="anonymous"></script>
+<script src="isolation.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.11.6/dist/ffmpeg.min.js" crossorigin="anonymous"></script>
 <script type="module" src="app.js"></script>
 </body>
