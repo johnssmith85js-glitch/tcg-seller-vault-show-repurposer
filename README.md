@@ -1,6 +1,6 @@
 # TCG Seller Vault — Show Repurposer
 
-Mobile-first prototype that turns a Whatnot recording into a branded social clip. Analysis runs in the browser: sampled frames are OCR'd, matched against a daily TCGCSV/TCGplayer catalog spanning every available TCG category, checked for multi-frame foil evidence, and placed into a review queue whenever confidence is insufficient.
+Mobile-first prototype that turns a stream recording into a branded social clip. Analysis runs in the browser: sampled frames are OCR'd across the full video, matched against a daily TCGCSV/TCGplayer catalog spanning every available TCG category, consolidated into distinct reveals, and filtered by finish-specific market values after recognition completes.
 
 ## Safety rules
 
