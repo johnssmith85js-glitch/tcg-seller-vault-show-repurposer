@@ -1,4 +1,4 @@
-import{matchLines}from'./catalog-client.js';
+import{matchLines}from'./catalog-client.js?v=22';
 const waitEvent=(el,name)=>new Promise((resolve,reject)=>{const ok=()=>{cleanup();resolve()},bad=()=>{cleanup();reject(new Error(`Video ${name} failed.`))},cleanup=()=>{el.removeEventListener(name,ok);el.removeEventListener('error',bad)};el.addEventListener(name,ok,{once:true});el.addEventListener('error',bad,{once:true})});
 async function seek(video,time){if(Math.abs(video.currentTime-time)<.025)return;video.currentTime=time;await waitEvent(video,'seeked')}
 function frameCanvas(video,maxWidth=900){const scale=Math.min(1,maxWidth/video.videoWidth),canvas=document.createElement('canvas');canvas.width=Math.round(video.videoWidth*scale);canvas.height=Math.round(video.videoHeight*scale);canvas.getContext('2d',{willReadFrequently:true}).drawImage(video,0,0,canvas.width,canvas.height);return canvas}
