@@ -22,3 +22,13 @@ test('recognition source is card-only and has no stream-context lock',async()=>{
   assert.match(source,/extractCardRegions/);
   assert.match(source,/candidateMode:true/);
 });
+
+
+test('recognition handles vertically stretched stream cards',async()=>{
+  const [vision,source]=await Promise.all([
+    readFile(new URL('../card-vision.js',import.meta.url),'utf8'),
+    readFile(new URL('../analyzer.js',import.meta.url),'utf8')
+  ]);
+  assert.match(vision,/2\.5,2\.8/);
+  assert.match(source,/bands=\[\.12,\.18,\.25\]/);
+});
