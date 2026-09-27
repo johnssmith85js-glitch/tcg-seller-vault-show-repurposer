@@ -1,7 +1,7 @@
 import test from'node:test';
 import assert from'node:assert/strict';
 import{readFile}from'node:fs/promises';
-import{groupDetections}from'../analyzer.js';
+import{chooseRecognitionMatches,groupDetections}from'../analyzer.js';
 import{differenceHash,hashBands,hashDistance}from'../visual-hash.js';
 
 const match=(game,name,score=.95)=>({score,item:{id:`${game}-${name}`,game,n:name,k:name.toLowerCase(),p:[{m:2}]}});
@@ -41,13 +41,27 @@ test('recognition reads only the physical-card reveal area',async()=>{
   assert.doesNotMatch(source,/contextTextSheet|contextLines|inferScope/);
 });
 
-test('artwork matching leads and OCR only resolves uncertainty',async()=>{
+test('artwork matching leads while strong card text vetoes a wrong TCG collision',async()=>{
   const source=await readFile(new URL('../analyzer.js',import.meta.url),'utf8');
   const visual=source.indexOf('await matchCardArtwork(row.cardHashes)');
   const ocr=source.indexOf('await matchLines(row.lines.slice(0,60)');
   assert.ok(visual>0&&ocr>visual);
-  assert.match(source,/if\(clearVisual\)\{row\.matches=visual;return\}/);
+  const wrong=[{...match('Flesh & Blood TCG','False Match',.8),support:2}];
+  const right=[match('Magic: The Gathering','Bloodline Bidding',.96)];
+  assert.deepEqual(chooseRecognitionMatches(wrong,right),right);
   assert.match(source,/Matching card artwork/);
+});
+
+test('one artwork collision cannot decide a card identity',()=>{
+  const collision=[{...match('Flesh & Blood TCG','False Match',.84),support:1}];
+  assert.deepEqual(chooseRecognitionMatches(collision,[]),[]);
+});
+
+test('reused artwork keeps every printing of the recognized card',()=>{
+  const first={...match('Magic: The Gathering','Bloodline Bidding',.91),support:3,item:{...match('Magic: The Gathering','Bloodline Bidding').item,id:'one',set:'Odyssey'}};
+  const second={...match('Magic: The Gathering','Bloodline Bidding',.9),support:3,item:{...match('Magic: The Gathering','Bloodline Bidding').item,id:'two',set:'Mystery Booster'}};
+  const other={...match('Flesh & Blood TCG','False Match',.77),support:2};
+  assert.deepEqual(chooseRecognitionMatches([first,second,other],[]),[first,second]);
 });
 
 test('64-bit artwork fingerprints provide stable bands and distance',()=>{
