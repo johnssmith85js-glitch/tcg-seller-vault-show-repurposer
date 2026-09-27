@@ -4,7 +4,8 @@ on:
   push:
     branches: [main]
   schedule:
-    - cron: '35 20 * * *'
+    # GitHub cron uses UTC: 06:05 is 2:05 AM EDT / 1:05 AM EST.
+    - cron: '5 6 * * *'
   workflow_dispatch:
 
 permissions:
@@ -14,10 +15,12 @@ permissions:
 
 concurrency:
   group: pages
-  cancel-in-progress: true
+  # Never let a code push cancel the autonomous catalog/artwork refresh.
+  cancel-in-progress: false
 
 jobs:
   deploy:
+    timeout-minutes: 360
     permissions:
       contents: read
       pages: write
@@ -41,7 +44,20 @@ jobs:
         run: node reuse-deployed-catalog.mjs
       - name: Refresh universal TCG catalog
         if: github.event_name != 'push'
-        run: npm run catalog
+        shell: bash
+        run: |
+          for attempt in 1 2 3; do
+            echo "Catalog refresh attempt ${attempt} of 3"
+            if npm run catalog; then
+              exit 0
+            fi
+            if [ "$attempt" -lt 3 ]; then
+              echo "Catalog provider unavailable; waiting 15 minutes before the next automatic attempt."
+              sleep 900
+            fi
+          done
+          echo "Catalog refresh failed after 3 automatic attempts. The current production catalog was not replaced."
+          exit 1
       - name: Build static site
         run: npm run build
       - uses: actions/configure-pages@v5
