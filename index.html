@@ -28,7 +28,7 @@
         <div class="panel-title"><span>1</span><h2>Import your show</h2></div>
         <label class="drop" for="videoFile"><b>Import Stream Clip</b><small id="videoLabel">MP4, MOV, or WebM</small></label>
         <input id="videoFile" class="visually-hidden" type="file" accept="video/*">
-        <label class="drop secondary" for="logoFile"><b>Add stream logo</b><small id="logoLabel">PNG, JPG, or WebP</small></label>
+        <label class="drop secondary" for="logoFile"><b>Replace default logo</b><small id="logoLabel">TCG Seller Vault business logo</small></label>
         <input id="logoFile" class="visually-hidden" type="file" accept="image/*">
         <details open>
           <summary>Video layout settings</summary>
@@ -74,7 +74,7 @@
     <section class="stage-panel" aria-label="Video preview">
       <canvas id="output" width="360" height="640"></canvas>
       <video id="video" playsinline preload="metadata" hidden></video>
-      <img id="logo" alt="" hidden>
+      <img id="logo" src="default-logo.png" alt="" hidden>
       <div class="transport">
         <button id="playPause" class="icon-button" disabled aria-label="Play or pause">▶</button>
         <input id="scrub" type="range" min="0" max="0" step=".05" value="0" aria-label="Video position">
