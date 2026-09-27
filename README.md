@@ -1,6 +1,6 @@
 # TCG Seller Vault — Show Repurposer
 
-Mobile-first prototype that turns a stream recording into a branded social clip. Analysis runs in the browser: sampled frames are OCR'd across the full video, matched against a daily TCGCSV/TCGplayer catalog spanning every available TCG category, consolidated into distinct reveals, and filtered by finish-specific market values after recognition completes.
+Mobile-first prototype that turns a stream recording into a branded social clip. Analysis runs in the browser: it selects the sharpest frames from each reveal, prioritizes stable stream and clip labels, isolates full-card visual candidates, and combines OCR with TCGplayer catalog-image comparison. Matches use the daily TCGCSV/TCGplayer catalog spanning every available TCG category, are consolidated into distinct reveals, and are filtered by finish-specific market values after recognition completes.
 
 ## Safety rules
 
