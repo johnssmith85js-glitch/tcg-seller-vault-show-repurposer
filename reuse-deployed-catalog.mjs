@@ -47,6 +47,11 @@ console.log(`Reused ${copied} catalog shards from the current production deploym
 const visualManifestResponse=await fetchRequired(`${base}/visual/manifest.json`);
 if(visualManifestResponse.ok){
   const manifest=await visualManifestResponse.json();
+  if(Number(manifest.version||0)<2){
+    console.log('Production artwork index needs normalized fingerprints; rebuilding it now.');
+    await import('./build-visual-index.mjs');
+    process.exit(0);
+  }
   await mkdir(join(out,'visual'),{recursive:true});
   await writeFile(join(out,'visual','manifest.json'),JSON.stringify(manifest));
   let visualNext=0,visualCopied=0;
