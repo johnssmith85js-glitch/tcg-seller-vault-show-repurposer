@@ -128,3 +128,4 @@ await writeFile(
 );
 
 console.log(`Wrote ${products} products across ${shards.size} shards`);
+await import('./build-visual-index.mjs');

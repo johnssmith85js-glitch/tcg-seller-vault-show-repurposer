@@ -43,3 +43,17 @@ async function worker() {
 await Promise.all(Array.from({ length: 8 }, worker));
 if (copied < 100) throw new Error(`Only ${copied} catalog shards were recovered; refusing to deploy.`);
 console.log(`Reused ${copied} catalog shards from the current production deployment.`);
+
+const visualManifestResponse=await fetchRequired(`${base}/visual/manifest.json`);
+if(visualManifestResponse.ok){
+  const manifest=await visualManifestResponse.json();
+  await mkdir(join(out,'visual'),{recursive:true});
+  await writeFile(join(out,'visual','manifest.json'),JSON.stringify(manifest));
+  let visualNext=0,visualCopied=0;
+  async function visualWorker(){while(visualNext<manifest.files.length){const file=manifest.files[visualNext++],response=await fetchRequired(`${base}/visual/${file}`);if(!response.ok)throw new Error(`Visual index file missing: ${file}`);const path=join(out,'visual',file);await mkdir(join(path,'..'),{recursive:true});await writeFile(path,Buffer.from(await response.arrayBuffer()));visualCopied++}}
+  await Promise.all(Array.from({length:12},visualWorker));
+  console.log(`Reused ${visualCopied} visual-index files.`);
+}else{
+  console.log('Production has no visual index; building the initial artwork index now.');
+  await import('./build-visual-index.mjs');
+}
