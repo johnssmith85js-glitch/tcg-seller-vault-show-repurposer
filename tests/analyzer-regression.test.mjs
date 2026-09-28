@@ -1,7 +1,7 @@
 import test from'node:test';
 import assert from'node:assert/strict';
 import{readFile}from'node:fs/promises';
-import{chooseRecognitionMatches,groupDetections}from'../analyzer.js';
+import{cardIdentityName,chooseRecognitionMatches,groupDetections}from'../analyzer.js';
 import{differenceHash,hashBands,hashDistance}from'../visual-hash.js';
 
 const match=(game,name,score=.95)=>({score,item:{id:`${game}-${name}`,game,n:name,k:name.toLowerCase(),p:[{m:2}]}});
@@ -57,11 +57,21 @@ test('one artwork collision cannot decide a card identity',()=>{
   assert.deepEqual(chooseRecognitionMatches(collision,[]),[]);
 });
 
+test('a strong multiword OCR shortlist can reach artwork verification',()=>{
+  const likely=[match('Magic','Bloodline Bidding',.74)];
+  const unrelated=[match('Flesh & Blood TCG','Blood Tribute',.6)];
+  assert.deepEqual(chooseRecognitionMatches([],likely.concat(unrelated)),likely);
+});
+
 test('reused artwork keeps every printing of the recognized card',()=>{
   const first={...match('Magic: The Gathering','Bloodline Bidding',.91),support:3,item:{...match('Magic: The Gathering','Bloodline Bidding').item,id:'one',set:'Odyssey'}};
   const second={...match('Magic: The Gathering','Bloodline Bidding',.9),support:3,item:{...match('Magic: The Gathering','Bloodline Bidding').item,id:'two',set:'Mystery Booster'}};
   const other={...match('Flesh & Blood TCG','False Match',.77),support:2};
   assert.deepEqual(chooseRecognitionMatches([first,second,other],[]),[first,second]);
+});
+
+test('art variants share one base card identity',()=>{
+  assert.equal(cardIdentityName({name:'Bloodline Bidding (Showcase) (Fracture Foil)'}),'bloodline bidding');
 });
 
 test('64-bit artwork fingerprints provide stable bands and distance',()=>{
