@@ -2,7 +2,7 @@ import test from'node:test';
 import assert from'node:assert/strict';
 import{readFile}from'node:fs/promises';
 import{cardIdentityName,chooseRecognitionMatches,groupDetections}from'../analyzer.js';
-import{differenceHash,hashBands,hashDistance}from'../visual-hash.js';
+import{differenceHash,hashBands,hashDistance,hashProjections}from'../visual-hash.js';
 
 const match=(game,name,score=.95)=>({score,item:{id:`${game}-${name}`,game,n:name,k:name.toLowerCase(),p:[{m:2}]}});
 
@@ -82,4 +82,11 @@ test('64-bit artwork fingerprints provide stable bands and distance',()=>{
   assert.equal(hashBands(hash).length,8);
   assert.equal(hashDistance(hash,hash),0);
   assert.equal(hashDistance('0000000000000000','ffffffffffffffff'),64);
+});
+
+test('cross-image projections recover a near artwork with no exact byte band',()=>{
+  const query='b9f1a9ac0c8cdcca',reference='b499f9bcbe8eaecc';
+  assert.equal(hashBands(query).filter((band,index)=>band===hashBands(reference)[index]).length,0);
+  assert.ok(hashProjections(query).some((key,index)=>key===hashProjections(reference)[index]));
+  assert.equal(hashDistance(query,reference),20);
 });
