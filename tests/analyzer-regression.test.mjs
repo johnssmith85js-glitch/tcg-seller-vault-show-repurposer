@@ -80,6 +80,13 @@ test('reused artwork keeps every printing of the recognized card',()=>{
   assert.deepEqual(chooseRecognitionMatches([first,second,other],[]),[first,second]);
 });
 
+test('embedding shortlist accepts two art variants ahead of unrelated cards',()=>{
+  const first={...match('Magic','Bloodline Bidding',.81),support:3,item:{...match('Magic','Bloodline Bidding').item,id:'671491'}};
+  const second={...match('Magic','Bloodline Bidding',.807),support:3,item:{...match('Magic','Bloodline Bidding').item,id:'671492'}};
+  const unrelated={...match('One Piece Card Game','We Are!',.611),support:3};
+  assert.deepEqual(chooseRecognitionMatches([first,second,unrelated],[]),[first,second]);
+});
+
 test('art variants share one base card identity',()=>{
   assert.equal(cardIdentityName({name:'Bloodline Bidding (Showcase) (Fracture Foil)'}),'bloodline bidding');
 });
