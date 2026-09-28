@@ -64,6 +64,13 @@ test('a strong multiword OCR shortlist can reach artwork verification',()=>{
   assert.deepEqual(chooseRecognitionMatches([],likely.concat(unrelated)),likely);
 });
 
+test('one-word OCR noise cannot decide identity without artwork agreement',()=>{
+  const noise=[match('Bakugan TCG','CEE',1)];
+  assert.deepEqual(chooseRecognitionMatches([],noise),[]);
+  const agreed=[{...match('Bakugan TCG','CEE',.8),support:3}];
+  assert.deepEqual(chooseRecognitionMatches(agreed,noise),agreed);
+});
+
 test('reused artwork keeps every printing of the recognized card',()=>{
   const first={...match('Magic: The Gathering','Bloodline Bidding',.91),support:3,item:{...match('Magic: The Gathering','Bloodline Bidding').item,id:'one',set:'Odyssey'}};
   const second={...match('Magic: The Gathering','Bloodline Bidding',.9),support:3,item:{...match('Magic: The Gathering','Bloodline Bidding').item,id:'two',set:'Mystery Booster'}};
