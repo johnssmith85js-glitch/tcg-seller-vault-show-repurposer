@@ -16,3 +16,5 @@ export function artworkFeatures(source,{width=286,height=400,limit=700}={}){
 
 function hamming(a,ao,b,bo){let distance=0;for(let i=0;i<32;i++)distance+=POPCOUNT[a[ao+i]^b[bo+i]];return distance}
 export function featureMatches(reference,query,ratio=.76){if(!reference?.count||!query?.count)return 0;let good=0;for(let i=0;i<reference.count;i++){let best=Infinity,runner=Infinity,offset=i*32;for(let j=0;j<query.count;j++){const distance=hamming(reference.data,offset,query.data,j*32);if(distance<best){runner=best;best=distance}else if(distance<runner)runner=distance}if(best<runner*ratio)good++}return good}
+
+export function descriptorTokens(features,{limit=160}={}){if(!features?.count)return[[],[],[],[]];const out=Array.from({length:4},()=>new Set),count=Math.min(limit,features.count);for(let row=0;row<count;row++)for(let table=0;table<4;table++){let token=0;for(let bit=0;bit<12;bit++){const position=(table*53+bit*17)%256,byte=features.data[row*32+(position>>3)],value=(byte>>(position&7))&1;token|=value<<bit}out[table].add(token)}return out.map(set=>[...set])}
