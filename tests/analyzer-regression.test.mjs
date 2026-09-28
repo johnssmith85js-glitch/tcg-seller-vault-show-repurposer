@@ -2,6 +2,7 @@ import test from'node:test';
 import assert from'node:assert/strict';
 import{readFile}from'node:fs/promises';
 import{cardIdentityName,chooseRecognitionMatches,groupDetections}from'../analyzer.js';
+import{descriptorTokens}from'../feature-matcher.js';
 import{differenceHash,hashBands,hashDistance,hashProjections}from'../visual-hash.js';
 
 const match=(game,name,score=.95)=>({score,item:{id:`${game}-${name}`,game,n:name,k:name.toLowerCase(),p:[{m:2}]}});
@@ -44,9 +45,10 @@ test('recognition reads only detector-isolated cards',async()=>{
 
 test('artwork matching leads while strong card text vetoes a wrong TCG collision',async()=>{
   const source=await readFile(new URL('../analyzer.js',import.meta.url),'utf8');
-  const visual=source.indexOf('await matchCardArtwork(row.cardHashes)');
+  const visual=source.indexOf('await matchCardFeatures(row.cardCandidates)');
   const ocr=source.indexOf('await matchLines(row.lines.slice(0,60)');
   assert.ok(visual>0&&ocr>visual);
+  assert.match(source,/features\.length\?features:await matchCardArtwork/);
   const wrong=[{...match('Flesh & Blood TCG','False Match',.8),support:2}];
   const right=[match('Magic: The Gathering','Bloodline Bidding',.96)];
   assert.deepEqual(chooseRecognitionMatches(wrong,right),right);
@@ -80,6 +82,26 @@ test('reused artwork keeps every printing of the recognized card',()=>{
 
 test('art variants share one base card identity',()=>{
   assert.equal(cardIdentityName({name:'Bloodline Bidding (Showcase) (Fracture Foil)'}),'bloodline bidding');
+});
+
+test('catalog-wide local descriptors produce deterministic bounded lookup tokens',()=>{
+  const data=Uint8Array.from({length:96},(_,index)=>(index*37+11)%256),features={count:3,data};
+  const first=descriptorTokens(features),second=descriptorTokens(features);
+  assert.deepEqual(first,second);
+  assert.equal(first.length,4);
+  assert.ok(first.every(table=>table.length>0&&table.every(token=>token>=0&&token<4096)));
+});
+
+test('recognized base identity expands to all catalog printings before finish review',async()=>{
+  const [analyzer,catalog,build]=await Promise.all([
+    readFile(new URL('../analyzer.js',import.meta.url),'utf8'),
+    readFile(new URL('../catalog-client.js',import.meta.url),'utf8'),
+    readFile(new URL('../build-visual-index.mjs',import.meta.url),'utf8')
+  ]);
+  assert.match(analyzer,/await identityPrintings\(recognized\)/);
+  assert.match(catalog,/candidate\.game===item\.game/);
+  assert.match(build,/version:4/);
+  assert.match(build,/features\/table-/);
 });
 
 test('64-bit artwork fingerprints provide stable bands and distance',()=>{
