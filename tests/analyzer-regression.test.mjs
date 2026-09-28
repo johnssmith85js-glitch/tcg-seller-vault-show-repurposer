@@ -24,20 +24,21 @@ test('recognition source is card-only and has no stream-context lock',async()=>{
   assert.match(source,/candidateMode:true/);
 });
 
-test('recognition handles vertically stretched stream cards',async()=>{
+test('recognition searches plausible distorted card shapes',async()=>{
   const [vision,source]=await Promise.all([
     readFile(new URL('../card-vision.js',import.meta.url),'utf8'),
     readFile(new URL('../analyzer.js',import.meta.url),'utf8')
   ]);
-  assert.match(vision,/2\.5,2\.8/);
+  assert.match(vision,/1\.9,2\.2/);
+  assert.match(vision,/expandedCrop/);
   assert.match(source,/bands=\[\.12,\.18,\.25\]/);
 });
 
-test('recognition reads only the physical-card reveal area',async()=>{
+test('recognition reads only detector-isolated cards',async()=>{
   const source=await readFile(new URL('../analyzer.js',import.meta.url),'utf8');
-  assert.match(source,/portrait\?\.28:\.22/);
-  assert.match(source,/portrait\?\.27:\.16/);
-  assert.match(source,/cardTextSheet\(frame,regions\)/);
+  assert.match(source,/cardTextSheet\(regions\)/);
+  assert.doesNotMatch(source,/drawImage\(frame/);
+  assert.doesNotMatch(source,/revealHeight|portrait\?\.28:\.22|portrait\?\.27:\.16/);
   assert.doesNotMatch(source,/contextTextSheet|contextLines|inferScope/);
 });
 
