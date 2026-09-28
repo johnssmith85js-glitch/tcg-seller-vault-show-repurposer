@@ -1,5 +1,5 @@
 import{matchLines,normalize}from'./catalog-client.js?v=25';
-import{extractCardRegions,matchCardArtwork,rerankByCardImage}from'./card-vision.js?v=5';
+import{extractCardRegions,matchCardArtwork,rerankByCardImage}from'./card-vision.js?v=6';
 import{artworkFeatures}from'./feature-matcher.js?v=1';
 const waitEvent=(el,name)=>new Promise((resolve,reject)=>{const ok=()=>{cleanup();resolve()},bad=()=>{cleanup();reject(new Error(`Video ${name} failed.`))},cleanup=()=>{el.removeEventListener(name,ok);el.removeEventListener('error',bad)};el.addEventListener(name,ok,{once:true});el.addEventListener('error',bad,{once:true})});
 async function seek(video,time){if(Math.abs(video.currentTime-time)<.025)return;video.currentTime=time;await waitEvent(video,'seeked')}

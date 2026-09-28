@@ -58,6 +58,10 @@ if(visualManifestResponse.ok){
   async function visualWorker(){while(visualNext<manifest.files.length){const file=manifest.files[visualNext++],response=await fetchRequired(`${base}/visual/${file}`);if(!response.ok)throw new Error(`Visual index file missing: ${file}`);const path=join(out,'visual',file);await mkdir(join(path,'..'),{recursive:true});await writeFile(path,Buffer.from(await response.arrayBuffer()));visualCopied++}}
   await Promise.all(Array.from({length:12},visualWorker));
   console.log(`Reused ${visualCopied} visual-index files.`);
+  if(Number(manifest.version||0)<3){
+    console.log('Adding tolerant artwork projections to the production index.');
+    await import('./build-visual-projections.mjs');
+  }
 }else{
   console.log('Production has no visual index; building the initial artwork index now.');
   await import('./build-visual-index.mjs');

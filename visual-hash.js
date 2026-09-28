@@ -14,3 +14,9 @@ export function hashDistance(a,b){
 export function hashBands(hash){
   return Array.from({length:8},(_,index)=>hash.slice(index*2,index*2+2));
 }
+
+export function hashProjections(hash){
+  const offsets=[5,7],out=[];
+  for(const offset of offsets)for(let index=0;index<8;index++)out.push(hash[index]+hash[(index+offset)%16]);
+  return out;
+}
