@@ -58,6 +58,18 @@ if(visualManifestResponse.ok){
   async function visualWorker(){while(visualNext<manifest.files.length){const file=manifest.files[visualNext++],response=await fetchRequired(`${base}/visual/${file}`);if(!response.ok)throw new Error(`Visual index file missing: ${file}`);const path=join(out,'visual',file);await mkdir(join(path,'..'),{recursive:true});await writeFile(path,Buffer.from(await response.arrayBuffer()));visualCopied++}}
   await Promise.all(Array.from({length:12},visualWorker));
   console.log(`Reused ${visualCopied} visual-index files.`);
+  const embeddingManifestResponse=await fetchRequired(`${base}/visual/embeddings/manifest.json`);
+  if(embeddingManifestResponse.ok){
+    const embeddingManifest=await embeddingManifestResponse.json(),embeddingIndexResponse=await fetchRequired(`${base}/visual/embeddings/index.bin`);
+    if(!embeddingIndexResponse.ok)throw new Error('Production embedding index is incomplete.');
+    const embeddingDir=join(out,'visual','embeddings');await mkdir(embeddingDir,{recursive:true});
+    await writeFile(join(embeddingDir,'manifest.json'),JSON.stringify(embeddingManifest));
+    await writeFile(join(embeddingDir,'index.bin'),Buffer.from(await embeddingIndexResponse.arrayBuffer()));
+    console.log(`Reused ${embeddingManifest.indexedProducts||0} artwork embeddings.`);
+  }else{
+    console.log('Production has no embedding index; building the initial artwork embedding index now.');
+    await import('./build-embedding-index.mjs');
+  }
   if(Number(manifest.version||0)<3){
     console.log('Adding tolerant artwork projections to the production index.');
     await import('./build-visual-projections.mjs');

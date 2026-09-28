@@ -32,3 +32,4 @@ for(let table=0;table<featureBuckets.length;table++){const buckets=featureBucket
 for(const[key,value]of itemBuckets){const file=`items/${key}.json`;await writeFile(join(out,file),JSON.stringify(value));files.push(file)}
 await writeFile(join(out,'manifest.json'),JSON.stringify({version:4,generatedAt:new Date().toISOString(),eligibleProducts:rows.length,indexedProducts:rows.length-failed,failedProducts:failed,files}));
 console.log(`Visual index contains ${rows.length-failed}/${rows.length} eligible products.`);
+await import('./build-embedding-index.mjs');
