@@ -1,4 +1,4 @@
-import{loadManifest}from'./catalog-client.js?v=26';import{analyzeVideo}from'./analyzer.js?v=26';
+import{loadManifest}from'./catalog-client.js?v=26';import{analyzeVideo}from'./analyzer.js?v=27';
 const $=id=>document.getElementById(id),video=$('video'),canvas=$('output'),ctx=canvas.getContext('2d',{alpha:false}),logo=$('logo');let videoFile,videoURL,videoReady=false,logoURL,logoReady=logo.complete&&logo.naturalWidth>0,hits=[],raf,frameCallback,manifest;
 const setStep=n=>document.querySelectorAll('.step').forEach((x,i)=>x.className='step '+(i+1<n?'done':i+1===n?'active':''));
 function fitCover(sw,sh,x,y,w,h){const r=Math.max(w/sw,h/sh),dw=sw*r,dh=sh*r;return[x+(w-dw)/2,y+(h-dh)/2,dw,dh]}
